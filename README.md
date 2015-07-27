@@ -6,16 +6,19 @@ So far only MySQL is supported as backend, but more could be added if necessary.
 
 ## Quick start
 
-1. Add "dbview" to your INSTALLED_APPS settings like this::
+1. Add "dbview" to your INSTALLED_APPS settings like this:
 
-    INSTALLED_APPS = (
-        ...
-        'dbview',
-    )
+```python
+INSTALLED_APPS = (
+    ...
+    'dbview',
+)
+
+```
 
 
 2. In your models.py create classes which extend dbview.models.DbView
-like this
+like this:
 
 
 ```python
