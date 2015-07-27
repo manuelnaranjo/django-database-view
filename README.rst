@@ -4,6 +4,8 @@ django-database-view
 
 A simple pluggable application that allows to work with database views.
 
+So far only MySQL is supported as backend, but more could be added if necessary.
+
 Quick start
 -----------
 
@@ -14,17 +16,13 @@ Quick start
      'dbview',
    )
 
+
 2. In your models.py create classes which extend dbview.models.DbView
 like this::
 
 .. code-block:: python
-   :caption: models.py
-   :name: models.py
-
-   ...
    from dbview.models import DbView
 
-   ...
    class MyView(DbView):
       fieldA = models.OneToOneField(modelA, primary_key=True, db_column='fielda__id')
       fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
@@ -42,5 +40,10 @@ like this::
                       values('fielda__id', 'fieldb')
           return str(qs.query)
 
+
 3. Then create a migration point for your view generation, edit that migration
-and modify it to match:
+and modify it, add: `from dbview.helpers import CreateView` and replace the line
+the call to migrations.CreateModel with CreateView.
+
+
+4. Migrate your database and start using your database views.
