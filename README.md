@@ -15,20 +15,20 @@ So far only MySQL is supported as backend, but more could be added if necessary.
     )
     ```
 
-2. In your models.py create classes which extend dbview.models.DbView
+2. In your models.py create classes which extend dbview.models.View
 like this:
 
 
     ```python
 
     from django.db import models
-    from dbview.models import DbView
+    from dbview.models import View
 
     class ModelA(models.Model):
         fielda = models.CharField()
         fieldc = models.IntegerField()
 
-    class MyView(DbView):
+    class MyView(View):
         fieldA = models.OneToOneField(ModelA, primary_key=True,
             db_column='fielda__id')
         fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
