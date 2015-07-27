@@ -20,26 +20,10 @@ Quick start
 2. In your models.py create classes which extend dbview.models.DbView
 like this::
 
-.. code-block:: python
-   from dbview.models import DbView
-
-   class MyView(DbView):
-      fieldA = models.OneToOneField(modelA, primary_key=True, db_column='fielda__id')
-      fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
-
-      @classmethod
-      dev view(klass):
-          '''
-          This method returns the SQL string that creates the view, in this
-          example fieldB is the result of annotating another column
-          '''
-          qs = modelA.objects.all().\
-                      annotate(fieldb=models.Sum('fieldc')) .\
-                      annotate(fielda__id=models.F('pk')) .\
-                      order_by('fielda__id') .\
-                      values('fielda__id', 'fieldb')
-          return str(qs.query)
-
+.. literalinclude:: example.py
+   :languague: python
+   :emphasize-lines: 9-26
+   :linenos:
 
 3. Then create a migration point for your view generation, edit that migration
 and modify it, add: `from dbview.helpers import CreateView` and replace the line
