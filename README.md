@@ -17,6 +17,7 @@ So far only MySQL is supported as backend, but more could be added if necessary.
 2. In your models.py create classes which extend dbview.models.DbView
 like this
 
+
 ```python
 
 from django.db import models
