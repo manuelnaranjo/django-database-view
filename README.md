@@ -46,11 +46,8 @@ class MyView(DbView):
         return str(qs.query)
 
 ```
-
-
 3. Then create a migration point for your view generation, edit that migration
 and modify it, add: `from dbview.helpers import CreateView` and replace the line
-the call to migrations.CreateModel with CreateView.
-
+the call to `migrations.CreateModel` with `CreateView`.
 
 4. Migrate your database and start using your database views.
