@@ -6,8 +6,7 @@ class CreateView(migrations.CreateModel):
 
         if not self.allow_migrate_model(schema_editor.connection.alias, model):
             raise
-        models = __import__(app_label).models
-        model = getattr(models, self.name)
+        model = apps.get_app_config(app_label).models_module
 
         sql = 'DROP VIEW IF EXISTS %(table)s;'
 
