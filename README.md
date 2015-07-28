@@ -15,20 +15,20 @@ So far only MySQL is supported as backend, but more could be added if necessary.
     )
     ```
 
-2. In your models.py create classes which extend dbview.models.View
+2. In your models.py create classes which extend dbview.DbView
 like this:
 
 
     ```python
 
     from django.db import models
-    from dbview.models import View
+    from dbview import DbView
 
     class ModelA(models.Model):
         fielda = models.CharField()
         fieldc = models.IntegerField()
 
-    class MyView(View):
+    class MyView(DbView):
         fieldA = models.OneToOneField(ModelA, primary_key=True,
             db_column='fielda__id')
         fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
@@ -49,7 +49,7 @@ like this:
 
 
 3. Then create a migration point for your view generation, edit that migration
-and modify it, add: `from dbview.helpers import CreateView` and replace the line
+and modify it, add: `from dbview import CreateView` and replace the line
 the call to `migrations.CreateModel` with `CreateView`.
 
 
