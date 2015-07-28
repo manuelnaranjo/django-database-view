@@ -16,7 +16,7 @@ class ViewManager(models.Manager):
     def update(self, *args, **kwargs):
         raise NotImplementedError
 
-class View(models.Model):
+class DbView(models.Model):
     objects = ViewManager()
 
     class Meta:
