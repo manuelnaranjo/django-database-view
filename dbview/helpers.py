@@ -1,4 +1,5 @@
 from django.db import migrations
+from django.apps import apps
 
 class CreateView(migrations.CreateModel):
     def database_forwards(self, app_label, schema_editor, from_state, to_state):
@@ -6,7 +7,8 @@ class CreateView(migrations.CreateModel):
 
         if not self.allow_migrate_model(schema_editor.connection.alias, model):
             raise
-        model = apps.get_app_config(app_label).models_module
+        models = apps.get_app_config(app_label).models_module
+        model = getattr(models, self.name)
 
         sql = 'DROP VIEW IF EXISTS %(table)s;'
 
