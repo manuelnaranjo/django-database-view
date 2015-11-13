@@ -39,3 +39,27 @@ class CreateView(migrations.CreateModel):
         sql = 'DROP VIEW IF EXISTS %s' % \
               schema_editor.quote_name(model._meta.db_table)
         schema_editor.execute(sql, None)
+
+
+class DeleteView(migrations.DeleteModel):
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        model = from_state.apps.get_model(app_label, self.name)
+        if self.allow_migrate_model(schema_editor.connection.alias, model):
+            models = apps.get_app_config(app_label).models_module
+            model = getattr(models, self.name)
+
+            sql = 'DROP VIEW IF EXISTS %(table)s;'
+
+            args = {
+                'table' : schema_editor.quote_name(model._meta.db_table),
+            }
+
+            sql = sql % args
+
+            schema_editor.execute(sql, None)
+
+    def database_backwards(self, app_label, schema_editor, from_state, to):
+        model = from_state.apps.get_model(app_label, self.name)
+        sql = 'DROP VIEW IF EXISTS %s' % \
+              schema_editor.quote_name(model._meta.db_table)
+        schema_editor.execute(sql, None)
