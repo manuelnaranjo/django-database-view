@@ -1,6 +1,7 @@
 from django.db import migrations
 from django.apps import apps
 
+
 class CreateView(migrations.CreateModel):
     def database_forwards(self, app_label, schema_editor, from_state, to_state):
         model = to_state.apps.get_model(app_label, self.name)

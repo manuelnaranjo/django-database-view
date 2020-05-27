@@ -1,3 +1,3 @@
 # placeholder for git
-from helpers import CreateView
-from models import DbView
+from dbview.helpers import CreateView
+from dbview.models import DbView
