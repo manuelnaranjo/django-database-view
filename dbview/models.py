@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ViewManager(models.Manager):
     def bulk_create(self, *args, **kwargs):
         raise NotImplementedError
@@ -15,6 +16,7 @@ class ViewManager(models.Manager):
 
     def update(self, *args, **kwargs):
         raise NotImplementedError
+
 
 class DbView(models.Model):
     objects = ViewManager()
