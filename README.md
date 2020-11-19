@@ -6,23 +6,12 @@ So far only MySQL is supported as backend, but more could be added if necessary.
 
 ## Quick start
 
-1. Add "dbview" to your INSTALLED_APPS settings like this:
-
-    ```python
-    INSTALLED_APPS = (
-        ...
-        'dbview',
-    )
-    ```
-
-2. In your models.py create classes which extend dbview.DbView
-like this:
-
+1. In your models.py create classes which extend dbview.DbView like this:
 
     ```python
 
     from django.db import models
-    from dbview import DbView
+    from dbview.models import DbView
 
     class ModelA(models.Model):
         fielda = models.CharField()
@@ -34,7 +23,7 @@ like this:
         fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
 
         @classmethod
-        def view(klass):
+        def view(cls):
             '''
             This method returns the SQL string that creates the view, in this
             example fieldB is the result of annotating another column
@@ -47,10 +36,25 @@ like this:
             return str(qs.query)
     ```
 
+Alternatively `get_view_str` method could be used to write a custom SQL:
 
-3. Then create a migration point for your view generation, edit that migration
-and modify it, add: `from dbview import CreateView` and replace the line
-the call to `migrations.CreateModel` with `CreateView`.
+    ```python
 
+    class MyView(DbView):
 
-4. Migrate your database and start using your database views.
+        # ...
+
+        @classmethod
+        def get_view_str(cls):
+            return """
+            CREATE VIEW my_view AS (
+                SELECT ...
+            )
+            """
+    ```
+
+2. Then create a migration point for your view generation, edit that migration
+and modify it, add: `from dbview.helpers import CreateView` and replace the
+line the call to `migrations.CreateModel` with `CreateView`.
+
+3. Migrate your database and start using your database views.
