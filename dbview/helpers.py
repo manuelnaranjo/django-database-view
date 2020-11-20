@@ -22,7 +22,8 @@ class CreateView(migrations.CreateModel):
         elif hasattr(model, 'get_view_str'):
             self._create_view_from_raw_sql(model.get_view_str(), schema_editor)
         else:
-            raise Exception(f"{model} has neither view nor get_view_str")
+            raise Exception('{} has neither view nor get_view_str'.format(
+                model))
 
     def database_backwards(self, app_label, schema_editor, from_state, to):
         fake_model = from_state.apps.get_model(app_label, self.name)
@@ -34,7 +35,7 @@ class CreateView(migrations.CreateModel):
         if hasattr(models, self.name):
             return getattr(models, self.name)
 
-        # TODO: recursive search
+        # TODO: identify model more reliably and support more than 1 level
         for submodule in models.__dict__.values():
             if hasattr(submodule, self.name):
                 return getattr(submodule, self.name)
