@@ -11,7 +11,7 @@ class CreateView(migrations.CreateModel):
 
         if not self.allow_migrate_model(
                 schema_editor.connection.alias, fake_model):
-            raise
+            return
 
         model = self._get_model(fake_model, app_label, to_state)
 
