@@ -9,7 +9,7 @@ Quick start
 
 1. Install the package::
 
-    pip install django-database-models
+    pip install django-database-view
 
 2. In your ``models.py`` create classes which extend ``dbview.models.DbView``
    like this:
