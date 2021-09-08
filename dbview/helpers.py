@@ -15,7 +15,7 @@ class CreateView(migrations.CreateModel):
 
         model = self._get_model(fake_model, app_label, to_state)
 
-        self._drop_view(fake_model, schema_editor)
+        self._drop_view(fake_model, model, schema_editor)
 
         if hasattr(model, 'view'):
             self._create_standard_view(model, schema_editor)
@@ -27,7 +27,8 @@ class CreateView(migrations.CreateModel):
 
     def database_backwards(self, app_label, schema_editor, from_state, to):
         fake_model = from_state.apps.get_model(app_label, self.name)
-        self._drop_view(fake_model, schema_editor)
+        model = self._get_model(fake_model, app_label, to)
+        self._drop_view(fake_model, model, schema_editor)
 
     def _get_model(self, state, app_label, fake_model):
         models = apps.get_app_config(app_label).models_module
@@ -43,10 +44,13 @@ class CreateView(migrations.CreateModel):
         logging.warning('Using fake model, this may fail with inherited views')
         return fake_model
 
-    def _drop_view(self, model, schema_editor):
-        sql_template = 'DROP VIEW IF EXISTS %(table)s CASCADE'
+    def _drop_view(self, fake_model, model, schema_editor):
+        if hasattr(model, 'drop_view_sql'):
+            sql_template = model.drop_view_sql
+        else:
+            sql_template = 'DROP VIEW IF EXISTS %(table)s'
         args = {
-            'table': schema_editor.quote_name(model._meta.db_table),
+            'table': schema_editor.quote_name(fake_model._meta.db_table),
         }
         sql = sql_template % args
         schema_editor.execute(sql, None)
