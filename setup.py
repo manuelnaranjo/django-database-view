@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name='django-database-view',
-    version='0.2.1',
+    version='0.3.0',
     packages=['dbview'],
     long_description=read('README.rst'),
     include_package_data=True,
