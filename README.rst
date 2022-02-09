@@ -20,12 +20,12 @@ Quick start
       from dbview.models import DbView
 
       class ModelA(models.Model):
-          fielda = models.CharField()
+          fielda = models.CharField(max_length=64)
           fieldc = models.IntegerField()
 
       class MyView(DbView):
           fieldA = models.OneToOneField(ModelA, primary_key=True,
-              db_column='fielda__id')
+              on_delete=models.DO_NOTHING, db_column='fielda__id')
           fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
 
           @classmethod
