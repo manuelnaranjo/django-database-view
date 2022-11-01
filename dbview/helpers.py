@@ -7,6 +7,7 @@ For Create/Drop SQL VIEW you must do:
 3) set False in db_route.py in allow_migrate
 4) manage.py migrate"""
 import logging
+import types
 
 from django.apps import apps
 from django.db import migrations
@@ -28,6 +29,17 @@ class SQLViewsMixin:
         sql = sql_template % args
         schema_editor.execute(sql, None)
 
+    def get_model_instance(self, submodules):
+        """get model recursive"""
+        attrs = [attr for attr in dir(submodules) if '_' not in attr]
+        for attr in attrs:
+            value = getattr(submodules, attr)
+            if self.name in str(value):
+                return value
+            if isinstance(value, types.ModuleType):
+                return self.get_model_instance(value)
+        return None
+
     def _get_model(self, app_label, fake_model):
         """
         :fake_model: loaded from code
@@ -37,10 +49,9 @@ class SQLViewsMixin:
         if hasattr(models, self.name):
             return getattr(models, self.name)
 
-        # TODO: identify model more reliably and support more than 1 level
-        for submodule in models.__dict__.values():
-            if hasattr(submodule, self.name):
-                return getattr(submodule, self.name)
+        sub_model = self.get_model_instance(models)
+        if sub_model:
+            return sub_model
 
         logging.warning("Using fake model, this may fail with inherited views")
         return fake_model
@@ -75,9 +86,9 @@ class SQLViewsMixin:
         else:
             raise Exception(f"{model} has neither view nor get_view_str")
 
-    def drop_view(self, app_label, schema_editor, from_state, to_state):
+    def drop_view(self, app_label, schema_editor, state):
         """Drop view method"""
-        fake_model = from_state.apps.get_model(app_label, self.name)
+        fake_model = state.apps.get_model(app_label, self.name)
         model = self._get_model(app_label, fake_model)
         self._drop_view(model, schema_editor)
 
@@ -87,7 +98,7 @@ class DropView(migrations.DeleteModel, SQLViewsMixin):
 
     def database_forwards(self, app_label, schema_editor, from_state, to_state):
         """Forwards DROP VIEW from DB"""
-        self.drop_view(app_label, schema_editor, from_state, to_state)
+        self.drop_view(app_label, schema_editor, to_state)
 
     def database_backwards(self, app_label, schema_editor, from_state, to_state):
         """Backwards CREATE VIEW from DB"""
@@ -103,4 +114,4 @@ class CreateView(migrations.CreateModel, SQLViewsMixin):
 
     def database_backwards(self, app_label, schema_editor, from_state, to_state):
         """Backwards DROP VIEW from DB"""
-        self.drop_view(app_label, schema_editor, from_state, to_state)
+        self.drop_view(app_label, schema_editor, from_state)
