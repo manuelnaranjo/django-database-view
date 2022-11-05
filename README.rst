@@ -63,7 +63,11 @@ Quick start
 
 3. Then create a migration point for your view generation, edit that
    migration and modify it, add:
+
    ``from dbview.helpers import CreateView`` and replace the line the
    call to ``migrations.CreateModel`` with ``CreateView``.
+
+   ``from dbview.helpers import DropView`` and replace the line the
+   call to ``migrations.DeleteModel`` with ``DropView``.
 
 4. Migrate your database and start using your database views.
