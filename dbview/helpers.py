@@ -2,10 +2,11 @@
 https://github.com/manuelnaranjo/django-database-view updated helper
 (issue created. fork with solve created: https://github.com/Seriouskosk/django-database-view)
 For Create/Drop SQL VIEW you must do:
-1) set True in db_route.py in allow_migrate
-2) manage.py makemigrations
-3) set False in db_route.py in allow_migrate
-4) manage.py migrate"""
+1) manage.py makemigrations
+2) change:
+migrations.CreateModel on helpers.CreateView
+migrations.DeleteModel on helpers.DropView
+3) manage.py migrate"""
 import logging
 import types
 
@@ -31,7 +32,7 @@ class SQLViewsMixin:
 
     def get_model_instance(self, submodules):
         """get model recursive"""
-        attrs = [attr for attr in dir(submodules) if '_' not in attr]
+        attrs = [attr for attr in dir(submodules) if "_" not in attr]
         for attr in attrs:
             value = getattr(submodules, attr)
             if self.name in str(value):
@@ -84,7 +85,7 @@ class SQLViewsMixin:
         elif hasattr(model, "get_view_str"):
             self._create_view_from_raw_sql(model.get_view_str(), schema_editor)
         else:
-            raise Exception(f"{model} has neither view nor get_view_str")
+            raise Exception(f"{model} has neither view or get_view_str")
 
     def drop_view(self, app_label, schema_editor, state):
         """Drop view method"""
@@ -98,11 +99,11 @@ class DropView(migrations.DeleteModel, SQLViewsMixin):
 
     def database_forwards(self, app_label, schema_editor, from_state, to_state):
         """Forwards DROP VIEW from DB"""
-        self.drop_view(app_label, schema_editor, to_state)
+        self.drop_view(app_label, schema_editor, from_state)
 
     def database_backwards(self, app_label, schema_editor, from_state, to_state):
         """Backwards CREATE VIEW from DB"""
-        self.create_view(app_label, schema_editor, from_state)
+        self.create_view(app_label, schema_editor, to_state)
 
 
 class CreateView(migrations.CreateModel, SQLViewsMixin):
@@ -110,8 +111,8 @@ class CreateView(migrations.CreateModel, SQLViewsMixin):
 
     def database_forwards(self, app_label, schema_editor, from_state, to_state):
         """Forwards CREATE VIEW from DB"""
-        self.create_view(app_label, schema_editor, to_state)
+        self.create_view(app_label, schema_editor, from_state)
 
     def database_backwards(self, app_label, schema_editor, from_state, to_state):
         """Backwards DROP VIEW from DB"""
-        self.drop_view(app_label, schema_editor, from_state)
+        self.drop_view(app_label, schema_editor, to_state)
