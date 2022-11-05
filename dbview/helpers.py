@@ -2,10 +2,11 @@
 https://github.com/manuelnaranjo/django-database-view updated helper
 (issue created. fork with solve created: https://github.com/Seriouskosk/django-database-view)
 For Create/Drop SQL VIEW you must do:
-1) set True in db_route.py in allow_migrate
-2) manage.py makemigrations
-3) set False in db_route.py in allow_migrate
-4) manage.py migrate"""
+1) manage.py makemigrations
+2) change:
+migrations.CreateModel on helpers.CreateView
+migrations.DeleteModel on helpers.DropView
+3) manage.py migrate"""
 import logging
 import types
 
